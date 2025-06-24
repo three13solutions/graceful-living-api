@@ -1,20 +1,29 @@
 import express from "express";
+import multer from "multer";
+
 const router = express.Router();
 
-// Accept form submissions from frontend
-router.post("/", async (req, res) => {
+// Configure multer to store files in memory (or use disk if preferred)
+const storage = multer.memoryStorage(); // or use diskStorage({ ... })
+const upload = multer({ storage: storage });
+
+// Handle POST request with file uploads
+router.post("/", upload.fields([
+  { name: "applicantPhoto", maxCount: 1 },
+  { name: "uploadedDocuments", maxCount: 10 }
+]), async (req, res) => {
   try {
     const formData = req.body;
-    console.log("Received application:", formData);
+    const files = req.files;
 
-    // TODO: Save to DB
-    // TODO: Upload files to Google Drive
-    // TODO: Generate PDF
-    // TODO: Send email / WhatsApp alerts
+    console.log("Received form data:", formData);
+    console.log("Received files:", Object.keys(files));
+
+    // TODO: Process PDF, upload to Drive, email, etc.
 
     res.status(200).json({ message: "Application received successfully!" });
   } catch (error) {
-    console.error("Error handling application:", error);
+    console.error("Error handling form submission:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
