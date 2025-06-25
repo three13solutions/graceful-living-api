@@ -1,6 +1,8 @@
 import express from "express";
 import multer from "multer";
 import { generatePDFBuffer } from "../utils/pdfGenerator.js";
+import { uploadPDFToDrive } from "../utils/googleDriveUploader.js";
+import { sendPDFEmail } from "../utils/emailSender.js";
 
 const router = express.Router();
 
@@ -25,10 +27,13 @@ router.post(
       // ✅ Generate PDF
       const pdfBuffer = await generatePDFBuffer(formData);
 
-      // You can now:
-      // - Save to disk
-      // - Attach to email
-      // - Upload to Drive
+      const filename = `GLF-Application-${formData.firstName}-${Date.now()}.pdf`;
+
+      // 📁 Upload to Google Drive
+      await uploadPDFToDrive(pdfBuffer, filename);
+
+      // 📧 Send Email
+      await sendPDFEmail(formData.emailAddress || "admin@example.com", pdfBuffer, filename);
 
       res.status(200).json({ message: "Form + PDF received successfully!" });
     } catch (error) {
