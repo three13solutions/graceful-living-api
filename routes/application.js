@@ -28,7 +28,7 @@ router.post(
       // ✅ Generate PDF
       //const pdfBuffer = await generatePDFBuffer(formData);
       // Instead of generatePDFBuffer(formData)
-      const pdfBuffer = await generatePDFBufferFromGoogleDocs(formData);
+      const { pdfBuffer, folderLink, pdfFileLink } = await generatePDFAndSaveToFolder(formData);
 
       const filename = `GLF-Application-${formData.firstName}-${Date.now()}.pdf`;
 
