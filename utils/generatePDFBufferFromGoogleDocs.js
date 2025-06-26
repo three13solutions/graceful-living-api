@@ -19,7 +19,8 @@ export const generatePDFAndSaveToFolder = async (formData) => {
 
   // Step 1: Create applicant folder
   const folderName = `${formData.firstName} ${formData.lastName} - ${new Date().toLocaleDateString("en-GB").replace(/\//g, "-")}`;
-  const folder = await drive.files.create({
+  console.log("📁 Creating folder...");  
+const folder = await drive.files.create({
     requestBody: {
       name: folderName,
       mimeType: "application/vnd.google-apps.folder",
@@ -28,9 +29,11 @@ export const generatePDFAndSaveToFolder = async (formData) => {
     fields: "id, name, webViewLink",
   });
   const folderId = folder.data.id;
+  console.log("📁 Creating folder...");
 
   // Step 2: Copy the template into applicant folder
-  const copy = await drive.files.copy({
+console.log("📄 Copying template...");  
+const copy = await drive.files.copy({
     fileId: TEMPLATE_ID,
     requestBody: {
       name: `Application Summary - ${formData.firstName} ${formData.lastName}`,
@@ -46,12 +49,14 @@ export const generatePDFAndSaveToFolder = async (formData) => {
       replaceText: formData[key] || "",
     },
   }));
+  console.log("🔁 Replacing placeholders...");
   await docs.documents.batchUpdate({
     documentId: copyId,
     requestBody: { requests: replacements },
   });
 
   // Step 4: Export the updated doc as PDF
+  console.log("📄 Exporting as PDF...");
   const exportResponse = await drive.files.export(
     { fileId: copyId, mimeType: "application/pdf" },
     { responseType: "stream" }
@@ -61,9 +66,11 @@ export const generatePDFAndSaveToFolder = async (formData) => {
   return new Promise((resolve, reject) => {
     exportResponse.data
       .on("end", async () => {
+        
         const pdfBuffer = bufferStream.read();
 
         // Step 5: Upload the PDF into the same folder
+        console.log("📤 Uploading PDF to Drive...");
         const uploadResponse = await drive.files.create({
           requestBody: {
             name: "Application Summary.pdf",
@@ -87,7 +94,8 @@ export const generatePDFAndSaveToFolder = async (formData) => {
           pdfFileLink: uploadResponse.data.webViewLink,
         });
       })
-      .on("error", reject)
-      .pipe(bufferStream);
+        .on("error", (err) => {
+    console.error("❌ PDF stream error:", err);
+    reject(err);
   });
 };
