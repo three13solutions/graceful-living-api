@@ -3,6 +3,8 @@ import multer from "multer";
 import { generatePDFBuffer } from "../utils/pdfGenerator.js";
 import { uploadPDFToDrive } from "../utils/googleDriveUploader.js";
 import { sendPDFEmail } from "../utils/emailSender.js";
+import { uploadPDFAndFiles } from "../utils/googleDriveUploader.js"; // updated
+  
 
 const router = express.Router();
 
@@ -29,13 +31,18 @@ router.post(
 
       const filename = `GLF-Application-${formData.firstName}-${Date.now()}.pdf`;
 
-      // 📁 Upload to Google Drive
-      await uploadPDFToDrive(pdfBuffer, filename);
-
+      // Upload everything into applicant's folder
+      const folderInfo = await uploadPDFAndFiles(formData, files, pdfBuffer);
+      console.log("✅ All files uploaded to:", folderInfo.webViewLink);
+      
       // 📧 Send Email
       await sendPDFEmail(formData.emailAddress || "admin@example.com", pdfBuffer, filename);
 
-      res.status(200).json({ message: "Form + PDF received successfully!" });
+      res.status(200).json({
+      message: "Form submitted successfully",
+      driveFolder: folderInfo.webViewLink,
+      });
+
     } catch (error) {
       console.error("❌ Error generating PDF:", error);
       res.status(500).json({ message: "Internal server error" });
