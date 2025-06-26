@@ -3,7 +3,7 @@ import multer from "multer";
 import { generatePDFBuffer } from "../utils/pdfGenerator.js";
 import { sendPDFEmail } from "../utils/emailSender.js";
 import { uploadPDFAndFiles } from "../utils/googleDriveUploader.js"; // updated
-  
+import { generatePDFBufferFromGoogleDocs } from "../utils/generatePDFBufferFromGoogleDocs.js";
 
 const router = express.Router();
 
@@ -26,7 +26,9 @@ router.post(
       console.log("📎 Files:", Object.keys(files));
 
       // ✅ Generate PDF
-      const pdfBuffer = await generatePDFBuffer(formData);
+      //const pdfBuffer = await generatePDFBuffer(formData);
+      // Instead of generatePDFBuffer(formData)
+      const pdfBuffer = await generatePDFBufferFromGoogleDocs(formData);
 
       const filename = `GLF-Application-${formData.firstName}-${Date.now()}.pdf`;
 
