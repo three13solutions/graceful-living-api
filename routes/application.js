@@ -1,7 +1,6 @@
 import express from "express";
 import multer from "multer";
 import { generatePDFBuffer } from "../utils/pdfGenerator.js";
-import { uploadPDFToDrive } from "../utils/googleDriveUploader.js";
 import { sendPDFEmail } from "../utils/emailSender.js";
 import { uploadPDFAndFiles } from "../utils/googleDriveUploader.js"; // updated
   
