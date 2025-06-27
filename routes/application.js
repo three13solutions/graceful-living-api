@@ -1,15 +1,23 @@
 import express from "express";
+const express = require('express');
 const router = express.Router();
+const { generateDocFromTemplate } = require('../utils/googleDocsHelper');
 
-router.post("/", async (req, res) => {
-  const data = req.body;
-  console.log("Received application:", data);
+// Example: POST /api/submit
+router.post('/submit', async (req, res) => {
+  try {
+    const formData = req.body;
 
-  // TODO: Generate PDF
-  // TODO: Upload files to Google Drive
-  // TODO: Send email to applicant & admin
+    const docUrl = await generateDocFromTemplate(formData);
 
-  res.status(200).json({ message: "Application received successfully!" });
+    res.status(200).json({
+      message: 'Application submitted successfully!',
+      documentUrl: docUrl,
+    });
+  } catch (error) {
+    console.error('❌ Error generating document:', error);
+    res.status(500).json({ message: 'Failed to generate document', error: error.message });
+  }
 });
 
-export default router;
+module.exports = router;
