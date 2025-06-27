@@ -1,22 +1,16 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import applicationRoutes from "./routes/application.js";
-import applicationRoutes from './routes/application.js';
-
+import express from 'express';
+import applicationRoutes from './routes/application.js'; // ✅ Import only once
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
+app.use(express.json());
 app.use('/api', applicationRoutes);
-app.use(cors());
-app.use(bodyParser.json());
-app.use("/api/applications", applicationRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Graceful Living API is running.");
+app.get('/', (req, res) => {
+  res.send('Graceful Living API is live');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`✅ Server running on port ${port}`);
 });
