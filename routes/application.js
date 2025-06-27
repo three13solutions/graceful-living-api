@@ -20,6 +20,7 @@ router.post(
     try {
       const formData = req.body;
       const files = req.files;
+      console.log("📦 Full formData received:", formData);
 
       console.log("✅ Received form submission");
       console.log("📎 Uploaded files:", Object.keys(files));
