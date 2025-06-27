@@ -30,19 +30,16 @@ console.log("✅ Identity Proof Raw:", formData.RequiredIdentityProof);
   // Step 2: Prepare replacements
 // Define fields that need to be shown as multiline
 const multilineKeys = [
-  "RequiredIdentityProof",
-  "RequiredAddressProof",
-  "AidSupportDocuments",
-  "BankVerification",
-  "AidUtilizationProof",
-  "DeclarationConsent",
+  "identityProofDocs",
+  "addressProofDocs",
+  "aidSupportDocs",
+  "bankVerificationDocs",
+  "aidUtilizationDocs"
 ];
 
-// Build replacement array
 const replacements = Object.keys(formData).map((key) => {
   let value = formData[key];
 
-  // If the field is a checklist (array), join each item on a new line
   if (multilineKeys.includes(key) && Array.isArray(value)) {
     value = value.join("\n");
   }
