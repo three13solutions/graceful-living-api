@@ -1,19 +1,15 @@
 import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import applicationRoutes from "./routes/application.js";
+const router = express.Router();
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+router.post("/", async (req, res) => {
+  const data = req.body;
+  console.log("Received application:", data);
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use("/api/applications", applicationRoutes);
+  // TODO: Generate PDF
+  // TODO: Upload files to Google Drive
+  // TODO: Send email to applicant & admin
 
-app.get("/", (req, res) => {
-  res.send("Graceful Living API is running.");
+  res.status(200).json({ message: "Application received successfully!" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+export default router;
