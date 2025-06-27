@@ -12,6 +12,8 @@ const auth = new google.auth.JWT(
 
 const drive = google.drive({ version: "v3", auth });
 const docs = google.docs({ version: "v1", auth });
+console.log("📄 Full Form Data:", formData);
+console.log("✅ Identity Proof Raw:", formData.RequiredIdentityProof);
 
 export const generatePDFBufferFromGoogleDocs = async (formData) => {
   const TEMPLATE_ID = process.env.GOOGLE_DOCS_TEMPLATE_ID;
