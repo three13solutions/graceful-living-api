@@ -1,10 +1,9 @@
 import express from "express";
 import multer from "multer";
 import { generatePDFBuffer } from "../utils/pdfGenerator.js";
+import { uploadPDFToDrive } from "../utils/googleDriveUploader.js";
 import { sendPDFEmail } from "../utils/emailSender.js";
-import { uploadPDFAndFiles } from "../utils/googleDriveUploader.js"; // updated
-//import { generatePDFBufferFromGoogleDocs } from "../utils/generatePDFBufferFromGoogleDocs.js";
-import { generatePDFAndSaveToFolder } from "../utils/generatePDFBufferFromGoogleDocs.js";
+import { generatePDFBufferFromGoogleDocs } from "../utils/generatePDFBufferFromGoogleDocs.js";
 
 
 const router = express.Router();
@@ -29,23 +28,17 @@ router.post(
 
       // ✅ Generate PDF
       //const pdfBuffer = await generatePDFBuffer(formData);
-      // Instead of generatePDFBuffer(formData)
-      const { pdfBuffer, folderLink, pdfFileLink } = await generatePDFAndSaveToFolder(formData);
+      const pdfBuffer = await generatePDFBufferFromGoogleDocs(formData);
 
       const filename = `GLF-Application-${formData.firstName}-${Date.now()}.pdf`;
 
-      // Upload everything into applicant's folder
-      const folderInfo = await uploadPDFAndFiles(formData, files, pdfBuffer);
-      console.log("✅ All files uploaded to:", folderInfo.webViewLink);
-      
+      // 📁 Upload to Google Drive
+      await uploadPDFToDrive(pdfBuffer, filename);
+
       // 📧 Send Email
       await sendPDFEmail(formData.emailAddress || "admin@example.com", pdfBuffer, filename);
 
-      res.status(200).json({
-      message: "Form submitted successfully",
-      driveFolder: folderInfo.webViewLink,
-      });
-
+      res.status(200).json({ message: "Form + PDF received successfully!" });
     } catch (error) {
       console.error("❌ Error generating PDF:", error);
       res.status(500).json({ message: "Internal server error" });
