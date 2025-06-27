@@ -15,7 +15,7 @@ async function generateDocFromTemplate(formData) {
   const docs = google.docs({ version: 'v1', auth });
   const drive = google.drive({ version: 'v3', auth });
 
-  const TEMPLATE_DOC_ID = 'YOUR_TEMPLATE_ID_HERE'; // Replace this
+  const TEMPLATE_DOC_ID = '1gho54qzLVY6og3Vqv43-dHijH9fUgqatv9VYR-ncczQ'; // Replace this
 
   const copy = await drive.files.copy({
     fileId: TEMPLATE_DOC_ID,
