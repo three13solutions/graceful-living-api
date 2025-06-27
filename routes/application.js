@@ -1,9 +1,9 @@
-import express from "express";
-const express = require('express');
-const router = express.Router();
-const { generateDocFromTemplate } = require('../utils/googleDocsHelper');
+// routes/application.js
+import express from 'express';
+import { generateDocFromTemplate } from '../utils/googleDocsHelper.js';
 
-// Example: POST /api/submit
+const router = express.Router();
+
 router.post('/submit', async (req, res) => {
   try {
     const formData = req.body;
@@ -20,4 +20,4 @@ router.post('/submit', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
