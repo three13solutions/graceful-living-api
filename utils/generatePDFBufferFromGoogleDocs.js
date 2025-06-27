@@ -27,12 +27,32 @@ export const generatePDFBufferFromGoogleDocs = async (formData) => {
   const copyId = copy.data.id;
 
   // Step 2: Prepare replacements
-  const replacements = Object.keys(formData).map((key) => ({
+// Define fields that need to be shown as multiline
+const multilineKeys = [
+  "RequiredIdentityProof",
+  "RequiredAddressProof",
+  "AidSupportDocuments",
+  "BankVerification",
+  "AidUtilizationProof",
+  "DeclarationConsent",
+];
+
+// Build replacement array
+const replacements = Object.keys(formData).map((key) => {
+  let value = formData[key];
+
+  // If the field is a checklist (array), join each item on a new line
+  if (multilineKeys.includes(key) && Array.isArray(value)) {
+    value = value.join("\n");
+  }
+
+  return {
     replaceAllText: {
       containsText: { text: `{{${key}}}`, matchCase: true },
-      replaceText: formData[key] || "",
+      replaceText: value || "",
     },
-  }));
+  };
+});
 
   // Step 3: Apply replacements
   await docs.documents.batchUpdate({
